@@ -5,22 +5,19 @@ import { MediaModel } from "src/models/mediaModel";
 
 
 export const getMedia = async (event: APIGatewayProxyEvent) => {
-    console.log("ehllo Man");
-    
     try {
         await connectDB();
+
         const age = event.requestContext.authorizer.age;
-        console.log('age', age);
-        
         const { page = "1", limit = "15", query, type } = event.queryStringParameters || {};
-        
+
         let filter: any = {};
 
         // Search by title or cast
         if (query) {
             filter.$or = [
-                { title: new RegExp(query, "i") },
-                { cast: { $in: [new RegExp(query, "i")] } }
+                { title: new RegExp(query.toLowerCase(), "i") },
+                { cast: { $in: [new RegExp(query.toLowerCase(), "i")] } }
             ];
         }
 
@@ -34,7 +31,7 @@ export const getMedia = async (event: APIGatewayProxyEvent) => {
             filter.rating = { $ne: "R" };
         }
 
-        const media = await MediaModel.find()
+        const media = await MediaModel.find(filter)
             .skip((parseInt(page) - 1) * parseInt(limit))
             .limit(parseInt(limit));
 

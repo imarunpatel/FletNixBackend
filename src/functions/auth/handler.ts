@@ -56,17 +56,10 @@ export const login = async (event: APIGatewayProxyEvent, context: Context) => {
     if (user && (await compare(credentials.password, user.password))) {
         let date = new Date();
         const accessToken = jwt.sign(
-            { user_id: user._id, email: credentials.email, otp: user.age },
+            { user_id: user._id, email: credentials.email, age: user.age },
             process.env.ACCESS_TOKEN_SECRET,
             {
                 expiresIn: '7h'
-            }
-        );
-        const refreshToken = jwt.sign(
-            { user_id: user._id, email: credentials.email },
-            process.env.REFRESH_TOKEN_SECRET,
-            {
-                expiresIn: '1d'
             }
         );
         return formatJSONResponse(200, {
@@ -74,7 +67,6 @@ export const login = async (event: APIGatewayProxyEvent, context: Context) => {
             success: true,
             data: {
                 accessToken,
-                refreshToken,
                 expiresAt: date.setHours(date.getHours() + 7),
             }
         })
@@ -87,51 +79,6 @@ export const login = async (event: APIGatewayProxyEvent, context: Context) => {
     }
 }
 
-export const accessToken = async (event: APIGatewayProxyEvent, context: Context) => {
-    context.callbackWaitsForEmptyEventLoop = false
-
-    if (!event.headers['Authorization']) {
-        return UnAuthorizedResponse()
-    }
-
-    let token = event.headers['Authorization'].replace("Bearer ", "")
-    if (!token) return UnAuthorizedResponse()
-
-    let date = new Date()
-    try {
-        const decoded: any = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-        const accessToken = jwt.sign(
-            { user_id: decoded._id, email: decoded.email },
-            process.env.ACCESS_TOKEN_SECRET,
-            {
-                expiresIn: '7h'
-            }
-        );
-        const refreshToken = jwt.sign(
-            { user_id: decoded._id, email: decoded.email },
-            process.env.REFRESH_TOKEN_SECRET,
-            {
-                expiresIn: '1d'
-            }
-        );
-
-        return formatJSONResponse(200, {
-            code: 200,
-            success: true,
-            data: {
-                accessToken,
-                refreshToken,
-                expiresAt: date.setHours(date.getHours() + 7),
-            }
-        })
-    } catch (e) {
-        return formatJSONResponse(401, {
-            code: 401,
-            success: false,
-            error: 'Session expired!'
-        })
-    }
-}
 
 export const getSelf = async (event: APIGatewayProxyEvent, context: Context) => {
     context.callbackWaitsForEmptyEventLoop = false

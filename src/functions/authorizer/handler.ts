@@ -12,8 +12,7 @@ export const verifyAuth = (event: APIGatewayTokenAuthorizerEvent, context, callb
 
     try {
         const decoded: any = verify(token, process.env.ACCESS_TOKEN_SECRET)
-        
-        if(decoded && decoded.userId) {
+        if(decoded && decoded.email) {
             return callback(
                 null,
                 generateAuthResponse(decoded.userId, decoded.age, "Allow", methodArn)

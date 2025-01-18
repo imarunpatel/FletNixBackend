@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import type { AWS } from "@serverless/typescript";
 
 import { healthCheck } from "@functions/system";
-import { login, registerUser } from "@functions/auth";
+import { getSelf, login, registerUser } from "@functions/auth";
 import { verifyAuth } from "@functions/authorizer";
 import { getMedia } from "@functions/media";
 
@@ -30,7 +30,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   // import the function via paths
-  functions: { verifyAuth, healthCheck, registerUser, login, getMedia },
+  functions: { verifyAuth, healthCheck, registerUser, login, getSelf, getMedia },
   package: { individually: true },
   custom: {
     esbuild: {

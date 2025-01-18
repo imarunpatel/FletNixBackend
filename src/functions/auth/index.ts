@@ -52,18 +52,6 @@ export const login = {
     ]
 }
 
-export const accessToken = {
-    handler: `${handlerPath(__dirname)}/handler.accessToken`,
-    events: [
-        {
-            http: {
-                method: 'get',
-                path: '/accessToken',
-            }
-        }
-    ]
-}
-
 export const getSelf = {
     handler: `${handlerPath(__dirname)}/handler.getSelf`,
     events: [
