@@ -68,6 +68,7 @@ export const login = async (event: APIGatewayProxyEvent, context: Context) => {
             data: {
                 accessToken,
                 expiresAt: date.setHours(date.getHours() + 7),
+                user: user.getPublicFacingDetails()
             }
         })
     } else {

@@ -52,7 +52,7 @@ UserSchema.pre('save', async function (next) {
 })
 
 UserSchema.methods.getPublicFacingDetails = function () {
-    return { _id: this._id.toString(), name: this.name, email: this.email, phone: this.phone, avatar: this.avatar, createdOn: this.createdOn }
+    return { _id: this._id.toString(), email: this.email, age: this.age, createdOn: this.createdOn }
 }
 
 export const UserModel = mongoose.model('users', UserSchema)

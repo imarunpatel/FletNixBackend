@@ -31,6 +31,7 @@ export const getMedia = async (event: APIGatewayProxyEvent) => {
             filter.rating = { $ne: "R" };
         }
 
+        const totalItems = await MediaModel.countDocuments(filter)
         const media = await MediaModel.find(filter)
             .skip((parseInt(page) - 1) * parseInt(limit))
             .limit(parseInt(limit));
@@ -38,7 +39,12 @@ export const getMedia = async (event: APIGatewayProxyEvent) => {
         return formatJSONResponse(200, {
             code: 200,
             success: true,
-            data: media
+            data: {
+                currentPage: parseInt(page),
+                totalItems,
+                itemsPerPage: parseInt(limit),
+                media
+            }
         });
     } catch (error) {
         return formatJSONResponse(400, {
